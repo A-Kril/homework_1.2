@@ -1,14 +1,14 @@
-use homework_1_2;
+USE homework_1_2;
 
-create temporary table temp
-select companies.name, customers.id, sum(projects.cost) summ
-from companies
-	join projects on projects.company_id = companies.id
-    join customers on customers.id = projects.customer_id
-group by companies.name, customers.name;
-select * from temp;
-
-select temp.name, customers.*, min(temp.summ)
-from temp, customers, companies
-where temp.name = companies.name and customers.id = temp.id
-group by companies.name
+SELECT
+  companies.name,
+  customers.id,
+  customers.name,
+  sum(projects.cost)
+FROM companies, projects, customers
+WHERE projects.company_id = (SELECT companies.id
+                             FROM companies
+                             WHERE companies.id = projects.company_id)
+      AND projects.customer_id = customers.id AND projects.company_id = companies.id
+GROUP BY customer_id
+ORDER BY sum(projects.cost)
